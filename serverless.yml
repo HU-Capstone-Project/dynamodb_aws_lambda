@@ -17,6 +17,9 @@ functions:
     name: bulkdynamodb
     memorySize: 128 # mb
     timeout: 30 # seconds
+    events:
+      - http: ANY /
+      - http: ANY /{proxy+}
     iamRoleStatements:
       - Effect: "Allow"
         Action:
