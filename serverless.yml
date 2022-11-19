@@ -8,6 +8,9 @@ provider:
   environment:
     DYNAMODB_TABLE_NAME: profile_sample
 
+plugins:
+  - serverless-iam-roles-per-function
+
 functions:
   bulkdynamodb:
     handler: server.bulkdynamodb
