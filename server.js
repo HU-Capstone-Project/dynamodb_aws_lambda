@@ -36,7 +36,7 @@ exports.bulkdynamodb = async (event) => {
 
           if (request.length == 25) {
             const params = { RequestItems: { profile_sample: request } };
-            const createResult = await db.send(
+            const createResult = await client.send(
               new BatchWriteItemCommand(params)
             );
             result.push(createResult);
