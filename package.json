@@ -1,0 +1,11 @@
+{
+  "name": "dynamodb_aws_lambda",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "hsntrq <mohdhasantariq@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.214.0",
+    "uuid": "^9.0.0"
+  }
+}

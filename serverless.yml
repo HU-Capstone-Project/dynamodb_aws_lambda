@@ -1,0 +1,41 @@
+service: dynamodb-bulk-api
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: me-central-1
+  environment:
+    DYNAMODB_TABLE_NAME: profile_sample
+
+functions:
+  bulkdynamodb:
+    handler: server.bulkdynamodb
+    name: bulkdynamodb
+    memorySize: 128 # mb
+    timeout: 30 # seconds
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:PutItem"
+        Resource: !GetAtt SampleTable.Arn
+
+resources:
+  Resources:
+    SampleTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: profile_sample
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: N
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: timestamp
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
