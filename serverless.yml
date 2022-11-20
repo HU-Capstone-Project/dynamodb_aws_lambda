@@ -23,7 +23,7 @@ functions:
     iamRoleStatements:
       - Effect: "Allow"
         Action:
-          - "dynamodb:PutItem"
+          - "dynamodb:BatchWriteItem"
         Resource: !GetAtt SampleTable.Arn
 
 resources:
