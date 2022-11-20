@@ -39,6 +39,7 @@ exports.bulkdynamodb = async (event) => {
           for (let j = 0; j < headers.length; j++) {
             obj.PutRequest.Item[headers[j]] = { N: vals[j] };
           }
+          obj.PutRequest.Item["study_id"] = { S: studyid };
           request.push(obj);
 
           if (request.length == 25) {
