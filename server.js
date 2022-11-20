@@ -70,16 +70,15 @@ exports.bulkdynamodb = async (event) => {
         result.push(e);
       }
 
-      response = {
+      return {
         statusCode: 200,
         body: JSON.stringify(result),
       };
-      return response;
     case "/samples/":
       const response = { statusCode: 200 };
       try {
         const { Items } = await client.send(
-          new ScanCommand({ TableName: profile_sample })
+          new ScanCommand({ TableName: "profile_sample" })
         );
         response.body = JSON.stringify(Items.map((item) => unmarshall(item)));
       } catch (e) {
