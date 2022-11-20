@@ -73,7 +73,7 @@ exports.bulkdynamodb = async (event) => {
 
       return {
         statusCode: 200,
-        body: JSON.stringify(result),
+        body: JSON.stringify([request,result]),
       };
     case "/samples/":
       const response = { statusCode: 200 };
