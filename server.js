@@ -49,6 +49,20 @@ exports.bulkdynamodb = async (event) => {
         i++;
       }
 
+      try {
+        if (request) {
+          const params = { RequestItems: { profile_sample: request } };
+          const createResult = await client.send(
+            new BatchWriteItemCommand(params)
+          );
+          result.push(createResult);
+          request.length = 0;
+        }
+      } catch (e) {
+        console.error(e);
+        result.push(e);
+      }
+
       response = {
         statusCode: 200,
         body: JSON.stringify(result),
