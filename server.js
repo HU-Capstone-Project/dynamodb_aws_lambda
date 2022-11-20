@@ -55,7 +55,7 @@ exports.bulkdynamodb = async (event) => {
           const createResult = await client.send(
             new BatchWriteItemCommand(params)
           );
-          result.push(createResult);
+          result.push([createResult, params]);
           request.length = 0;
         }
       } catch (e) {
