@@ -24,6 +24,7 @@ functions:
       - Effect: "Allow"
         Action:
           - "dynamodb:BatchWriteItem"
+          - "dynamodb:Scan"
         Resource: !GetAtt SampleTable.Arn
 
 resources:
