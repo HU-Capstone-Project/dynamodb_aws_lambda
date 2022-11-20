@@ -17,12 +17,13 @@ exports.bulkdynamodb = async (event) => {
       let len = data.length;
       const request = [];
       const result = [];
+      let params;
       while (i < len) {
         try {
           const obj = {
             PutRequest: {
               Item: {
-                id: { S: uuidv4() },
+                id: { "S": uuidv4() },
               },
             },
           };
@@ -30,7 +31,7 @@ exports.bulkdynamodb = async (event) => {
           const vals = data[i].split(",");
 
           for (let j = 0; j < headers.length; j++) {
-            obj.PutRequest.Item[headers[j]] = { N: vals[j] };
+            obj.PutRequest.Item[headers[j]] = { "N": vals[j] };
           }
           request.push(obj);
 
@@ -51,7 +52,7 @@ exports.bulkdynamodb = async (event) => {
 
       try {
         if (request) {
-          const params = { RequestItems: { profile_sample: request } };
+          params = { RequestItems: { profile_sample: request } };
           const createResult = await client.send(
             new BatchWriteItemCommand(params)
           );
@@ -60,7 +61,7 @@ exports.bulkdynamodb = async (event) => {
         }
       } catch (e) {
         console.error(e);
-        result.push(e);
+        result.push([e,params]);
       }
 
       response = {
