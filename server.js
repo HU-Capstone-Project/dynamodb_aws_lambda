@@ -46,6 +46,7 @@ exports.bulkdynamodb = async (event) => {
           console.error(e);
           result.push(e);
         }
+        i++;
       }
 
       response = {
