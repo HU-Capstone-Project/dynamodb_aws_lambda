@@ -17,7 +17,7 @@ exports.bulkdynamodb = async (event) => {
           body: JSON.stringify({ message: "Forbidden" }),
         };
       const data = event.body.split("\n");
-      const { nodeid, studyid } = data[0].split(",");
+      const [nodeid, studyid] = data[0].split(",");
       const headers = data[1].split(",");
       let i = 2;
       let len = data.length;
@@ -73,7 +73,7 @@ exports.bulkdynamodb = async (event) => {
 
       return {
         statusCode: 200,
-        body: JSON.stringify([studyid, request,result]),
+        body: JSON.stringify([studyid, request, result]),
       };
     case "/samples/":
       const response = { statusCode: 200 };
