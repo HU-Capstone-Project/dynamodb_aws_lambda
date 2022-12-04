@@ -14,7 +14,7 @@ module.exports = async (ddbClient, studyid) => {
           },
         }
       : { TableName: "profile_sample", ConsistentRead: true };
-    const { Items } = await ddbClient.send(new ScanCommand(params));
+    const Items = await ddbClient.send(new ScanCommand(params));
     // response.body = JSON.stringify(Items.map((item) => unmarshall(item)));
     response.body = JSON.stringify(Items);
   } catch (e) {
