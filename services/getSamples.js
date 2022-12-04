@@ -1,5 +1,4 @@
 const { ScanCommand } = require("@aws-sdk/lib-dynamodb");
-const { unmarshall } = require("@aws-sdk/util-dynamodb");
 
 module.exports = async (ddbClient, studyid) => {
   const response = { statusCode: 200 };
@@ -14,8 +13,12 @@ module.exports = async (ddbClient, studyid) => {
           },
         }
       : { TableName: "profile_sample", ConsistentRead: true };
-    const Items = await ddbClient.send(new ScanCommand(params));
-    // response.body = JSON.stringify(Items.map((item) => unmarshall(item)));
+    const totalItems = [];
+    do {
+      const res = await ddbClient.send(new ScanCommand(params));
+      totalItems.concat(res.Items);
+      params.ExclusiveStartKey = res.LastEvaluatedKey;
+    } while (res.LastEvaluatedKey);
     response.body = JSON.stringify(Items);
   } catch (e) {
     console.error(e);
