@@ -65,7 +65,7 @@ module.exports = async (data, ddbClient, rdsClient) => {
       request.push(obj);
 
       if (request.length == 25) {
-        const params = { RequestItems: { profile_sample: request } };
+        const params = { RequestItems: { study_sample: request } };
         const createResult = await ddbClient.send(
           new BatchWriteItemCommand(params)
         );
@@ -81,7 +81,7 @@ module.exports = async (data, ddbClient, rdsClient) => {
 
   try {
     if (request.length) {
-      params = { RequestItems: { profile_sample: request } };
+      params = { RequestItems: { study_sample: request } };
       const createResult = await ddbClient.send(
         new BatchWriteItemCommand(params)
       );

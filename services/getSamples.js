@@ -5,14 +5,14 @@ module.exports = async (ddbClient, studyid) => {
   try {
     const params = studyid
       ? {
-          TableName: "profile_sample",
+          TableName: "study_sample",
           ConsistentRead: true,
           FilterExpression: "studyid = :studyid",
           ExpressionAttributeValues: {
             ":studyid": studyid,
           },
         }
-      : { TableName: "profile_sample", ConsistentRead: true };
+      : { TableName: "study_sample", ConsistentRead: true };
     const totalItems = [];
     do {
       const res = await ddbClient.send(new ScanCommand(params));
