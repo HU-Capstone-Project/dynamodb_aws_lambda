@@ -1,97 +1,36 @@
-const {
-  DynamoDBClient,
-  BatchWriteItemCommand,
-  ScanCommand,
-} = require("@aws-sdk/client-dynamodb");
-const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
-const { v4: uuidv4 } = require("uuid");
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { Pool } = require("pg");
+const { insertSample, getSamples } = require("./services");
 
-const client = new DynamoDBClient({ region: "me-central-1" });
+const rdsConfig = {
+  user: "hsntrq",
+  password: "not1karachi1water1project",
+  database: "krp",
+  host: "krp.crjmlcwyfp09.me-central-1.rds.amazonaws.com",
+  port: 5432,
+};
 
-exports.bulkdynamodb = async (event) => {
-  switch (event.path) {
-    case "/insert/":
-      if (!event.body)
+const ddbClient = new DynamoDBClient({ region: "me-central-1" });
+const rdsClient = new Pool(rdsConfig);
+
+exports.apiserver = async (event) => {
+  const path = /^\/(\w+)\/?(\w+)?$/i.exec(event.path);
+  switch (path[1]) {
+    case "insert":
+      if (!event.body || event.httpMethod != "POST")
         return {
           statusCode: 403,
           body: JSON.stringify({ message: "Forbidden" }),
         };
       const data = event.body.split("\n");
-      const [nodeid, studyid] = data[0].split(",");
-      const headers = data[1].split(",");
-      let i = 2;
-      let len = data.length;
-      const request = [];
-      const result = [];
-      let params;
-      while (i < len) {
-        try {
-          const obj = {
-            PutRequest: {
-              Item: {
-                id: { S: uuidv4() },
-                studyid: { S: studyid },
-              },
-            },
-          };
-
-          const vals = data[i].split(",");
-
-          for (let j = 0; j < headers.length; j++) {
-            obj.PutRequest.Item[headers[j]] = { N: vals[j] };
-          }
-          request.push(obj);
-
-          if (request.length == 25) {
-            const params = { RequestItems: { profile_sample: request } };
-            const createResult = await client.send(
-              new BatchWriteItemCommand(params)
-            );
-            result.push(createResult);
-            request.length = 0;
-          }
-        } catch (e) {
-          console.error(e);
-          result.push(e);
-        }
-        i++;
-      }
-
-      try {
-        if (request) {
-          params = { RequestItems: { profile_sample: request } };
-          const createResult = await client.send(
-            new BatchWriteItemCommand(params)
-          );
-          result.push(createResult);
-          request.length = 0;
-        }
-      } catch (e) {
-        console.error(e);
-        result.push(e);
-      }
-
+      const result = await insertSample(data, ddbClient, rdsClient);
       return {
         statusCode: 200,
         body: JSON.stringify(result),
       };
-    case "/samples/":
-      const response = { statusCode: 200 };
-      try {
-        const { Items } = await client.send(
-          new ScanCommand({ TableName: "profile_sample" })
-        );
-        response.body = JSON.stringify(Items.map((item) => unmarshall(item)));
-      } catch (e) {
-        console.error(e);
-        response.statusCode = 500;
-        response.body = JSON.stringify({
-          message: "Failed to retrieve posts.",
-          errorMsg: e.message,
-          errorStack: e.stack,
-        });
-      }
-      return response;
+
+    case "samples":
+      return await getSamples(ddbClient, path[2]);
 
     default:
       return {

@@ -12,9 +12,9 @@ plugins:
   - serverless-iam-roles-per-function
 
 functions:
-  bulkdynamodb:
-    handler: server.bulkdynamodb
-    name: bulkdynamodb
+  apiserver:
+    handler: server.apiserver
+    name: apiserver
     memorySize: 128 # mb
     timeout: 30 # seconds
     events:
