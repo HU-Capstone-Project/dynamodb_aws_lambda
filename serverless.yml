@@ -44,5 +44,5 @@ resources:
           - AttributeName: timestamp
             KeyType: RANGE
         ProvisionedThroughput:
-          ReadCapacityUnits: 15
-          WriteCapacityUnits: 15
+          ReadCapacityUnits: 20
+          WriteCapacityUnits: 20
