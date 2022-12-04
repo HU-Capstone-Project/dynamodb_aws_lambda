@@ -1,4 +1,4 @@
-const { ScanCommand } = require("@aws-sdk/client-dynamodb");
+const { ScanCommand } = require("@aws-sdk/lib-dynamodb");
 const { unmarshall } = require("@aws-sdk/util-dynamodb");
 
 module.exports = async (ddbClient, studyid) => {
