@@ -80,7 +80,7 @@ module.exports = async (data, ddbClient, rdsClient) => {
   }
 
   try {
-    if (request) {
+    if (request.length) {
       params = { RequestItems: { profile_sample: request } };
       const createResult = await ddbClient.send(
         new BatchWriteItemCommand(params)
