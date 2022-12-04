@@ -34,15 +34,15 @@ resources:
       Properties:
         TableName: profile_sample
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: studyid
             AttributeType: S
           - AttributeName: timestamp
             AttributeType: N
         KeySchema:
-          - AttributeName: id
+          - AttributeName: studyid
             KeyType: HASH
           - AttributeName: timestamp
             KeyType: RANGE
         ProvisionedThroughput:
-          ReadCapacityUnits: 10
-          WriteCapacityUnits: 10
+          ReadCapacityUnits: 15
+          WriteCapacityUnits: 15
