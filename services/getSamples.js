@@ -14,12 +14,13 @@ module.exports = async (ddbClient, studyid) => {
         }
       : { TableName: "profile_sample", ConsistentRead: true };
     const totalItems = [];
+    const res = {};
     do {
-      const res = await ddbClient.send(new ScanCommand(params));
+      res = await ddbClient.send(new ScanCommand(params));
       totalItems.concat(res.Items);
       params.ExclusiveStartKey = res.LastEvaluatedKey;
     } while (res.LastEvaluatedKey);
-    response.body = JSON.stringify(Items);
+    response.body = JSON.stringify(totalItems);
   } catch (e) {
     console.error(e);
     response.statusCode = 500;
