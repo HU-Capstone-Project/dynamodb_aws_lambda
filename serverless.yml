@@ -6,7 +6,7 @@ provider:
   stage: dev
   region: me-central-1
   environment:
-    DYNAMODB_TABLE_NAME: profile_sample
+    DYNAMODB_TABLE_NAME: study_sample
 
 plugins:
   - serverless-iam-roles-per-function
@@ -32,7 +32,7 @@ resources:
     SampleTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: profile_sample
+        TableName: study_sample
         AttributeDefinitions:
           - AttributeName: studyid
             AttributeType: S
