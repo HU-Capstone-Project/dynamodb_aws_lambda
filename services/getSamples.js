@@ -7,12 +7,13 @@ module.exports = async (ddbClient, studyid) => {
     const params = studyid
       ? {
           TableName: "profile_sample",
+          ConsistentRead: true,
           FilterExpression: "studyid = :studyid",
           ExpressionAttributeValues: {
             ":studyid": studyid,
           },
         }
-      : { TableName: "profile_sample" };
+      : { TableName: "profile_sample", ConsistentRead: true };
     const { Items } = await ddbClient.send(new ScanCommand(params));
     response.body = JSON.stringify(Items.map((item) => unmarshall(item)));
   } catch (e) {
