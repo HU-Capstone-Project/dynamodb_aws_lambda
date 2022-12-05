@@ -9,19 +9,20 @@ module.exports = async (data, ddbClient, rdsClient) => {
   
   const request = [];
   const result = [];
+  let latidx = 0;
+  let longidx = 0;
+  let timeidx = 0;
+  let Acc_x1idx=0;
+  let Acc_y1idx=0;
+  let Acc_z1idx=0;
+  let Acc_x2idx=0;
+  let Acc_y2idx=0;
+  let Acc_z2idx=0;
   try {
     const study = await rdsClient.query("select * from profile where key=$1", [
       studyid,
     ]);
-    let latidx = 0;
-    let longidx = 0;
-    let timeidx = 0;
-    let Acc_x1idx=0;
-    let Acc_y1idx=0;
-    let Acc_z1idx=0;
-    let Acc_x2idx=0;
-    let Acc_y2idx=0;
-    let Acc_z2idx=0;
+    
     for (let j = 0; j < headers.length; j++) {
       if (headers[j] == "longitude") longidx = j;
       if (headers[j] == "latitude") latidx = j;
