@@ -20,7 +20,7 @@ const ddbClient = new DynamoDBClient({ region: "me-central-1" });
 const rdsClient = new Pool(rdsConfig);
 
 exports.apiserver = async (event) => {
-  const path = /^\/(\w+)?\/?(\w+)?\/?$/i.exec(event.path);
+  const path = /^\/(\w+)?\/?([\w-]+)?\/?$/i.exec(event.path);
   switch (path[1]) {
     case "insert":
       if (!event.body || event.httpMethod != "POST")
