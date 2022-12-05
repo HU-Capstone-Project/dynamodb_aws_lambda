@@ -37,7 +37,7 @@ module.exports.getSurveyors = async (client, id) => {
 module.exports.getProfiles = async (client, id) => {
   const response = { statusCode: 200 };
   try {
-    const q = `select * from profile join surveyor on surveyor.id=surveyor_id ${
+    const q = `select profile.id, time_received,start_pos_lat,start_pos_long,end_pos_lat,end_pos_long,profile.key,surveyor_id,name from profile join surveyor on surveyor.id=surveyor_id ${
       id ? `where surveyor.id=${id}` : ""
     } `;
     const res = await client.query(q);
