@@ -1,6 +1,12 @@
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { Pool } = require("pg");
-const { insertSample, getSamples } = require("./services");
+const {
+  insertSample,
+  getSamples,
+  getCars,
+  getProfiles,
+  getSurveyors,
+} = require("./services");
 
 const rdsConfig = {
   user: "hsntrq",
@@ -31,6 +37,15 @@ exports.apiserver = async (event) => {
 
     case "samples":
       return await getSamples(ddbClient, path[2]);
+
+    case "cars":
+      return await getCars(rdsClient, path[2]);
+
+    case "profiles":
+      return await getProfiles(rdsClient, path[2]);
+
+    case "surveyors":
+      return await getSurveyors(rdsClient, path[2]);
 
     default:
       return {
