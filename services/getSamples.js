@@ -24,7 +24,7 @@ module.exports = async (ddbClient, studyid) => {
     console.error(e);
     response.statusCode = 500;
     response.body = JSON.stringify({
-      message: "Failed to retrieve posts.",
+      message: "Failed to retrieve samples.",
       errorMsg: e.message,
       errorStack: e.stack,
     });
