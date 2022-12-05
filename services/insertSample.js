@@ -11,6 +11,8 @@ module.exports = async (data, ddbClient, rdsClient) => {
     const study = await rdsClient.query("select * from profile where key=$1", [
       studyid,
     ]);
+    const request = [];
+    const result = [];
     let latidx = 0;
     let longidx = 0;
     let timeidx = 0;
@@ -55,9 +57,8 @@ module.exports = async (data, ddbClient, rdsClient) => {
     }
   } catch (e) {
     console.log(e);
+    result.push(e);
   }
-  const request = [];
-  const result = [];
   let params;
   let IRI1 = 0;
   let Az_n_1 = 0;
