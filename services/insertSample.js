@@ -57,7 +57,7 @@ module.exports = async (data, ddbClient, rdsClient) => {
     }
   } catch (e) {
     console.log(e);
-    result.push(e);
+    result.push(e.stack);
   }
   let params;
   let IRI1 = 0;
