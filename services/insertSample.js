@@ -6,37 +6,20 @@ module.exports = async (data, ddbClient, rdsClient) => {
   const headers = data[1].split(",");
   let i = 2;
   let len = data.length;
-  const deg2rad = 0.01745; // Converts Degrees to Radians
-  const R_earth = 6371000;      // Radius of Earth in m
-
-  // Filter Specifications
- 
-  const Ts = 0.01;      // Sampling Frequency in Hz
-
-  // High Filter Parameters in S-Domain
-  const SZ_HPF = 0.34;
-  const SP_HPF = 500;
-  const G_HPF = 1;
-
-  // Deriving Coefficients for Discrete Filter from S-Domain parameters
-  const a0_HPF = SZ_HPF*Ts + 2;
-  const a1_HPF = SZ_HPF*Ts - 2;
-  const b0_HPF = SP_HPF*Ts + 2;
-  const b1_HPF = SP_HPF*Ts - 2;
 
   try {
     const study = await rdsClient.query("select * from profile where key=$1", [
       studyid,
     ]);
-    let latidx = 0,
-      longidx = 0,
-      timeidx = 0,
-      Acc_x1idx=0,
-      Acc_y1idx=0,
-      Acc_z1idx=0,
-      Acc_x2idx=0,
-      Acc_y2idx=0,
-      Acc_z2idx=0;
+    let latidx = 0;
+    let longidx = 0;
+    let timeidx = 0;
+    let Acc_x1idx=0;
+    let Acc_y1idx=0;
+    let Acc_z1idx=0;
+    let Acc_x2idx=0;
+    let Acc_y2idx=0;
+    let Acc_z2idx=0;
     for (let j = 0; j < headers.length; j++) {
       if (headers[j] == "longitude") longidx = j;
       if (headers[j] == "latitude") latidx = j;
@@ -76,35 +59,50 @@ module.exports = async (data, ddbClient, rdsClient) => {
   const request = [];
   const result = [];
   let params;
-  let IRI, // Initializing the variables used in the code
-    Az_n_1 = 0,
-    Az_HPF_n_1 = 0,
-    del_time = 0,
-    Az_HPF_n,
-    Az_n;
+  let IRI1 = 0;
+  let Az_n_1 = 0;
+  let Az_HPF_n_1 = 0;
+  let del_time = 0;
+  let Az_HPF_n;
+  let Az_n;
+  let IRI2 = 0;
+  let Az2_n_1 = 0;
+  let Az2_HPF_n_1 = 0;
+  let Az2_HPF_n;
+  let Az2_n;
  
   while (i < len) {
     try {
+      const vals = data[i].split(",");
+      Az_n = vals[Acc_z1idx];
+      Az2_n = vals[Acc_z2idx];
+      Az_HPF_n = (-0.4286)*Az_HPF_n_1 + 0.2862*Az_n - 0.2852*Az_n_1;
+      Az2_HPF_n = (-0.4286)*Az2_HPF_n_1 + 0.2862*Az2_n - 0.2852*Az2_n_1;
+      if (i > 2) {
+        const vals_old = data[i-1].split(",");
+        del_time = vals[timeidx] - vals_old[timeidx];
+        Az_avg = (Az_HPF_n + Az_HPF_n_1)/2;
+        Az2_avg = (Az2_HPF_n + Az2_HPF_n_1)/2;
+        IRI1 = Math.abs(Az_avg) * del_time^2;
+        IRI2 = Math.abs(Az2_avg) * del_time^2;
+        Az_n_1 = Az_n;
+        Az2_n_1 = Az2_n;
+        Az_HPF_n_1 = Az_HPF_n;
+        Az2_HPF_n_1 = Az2_HPF_n;
+      }
+
       const obj = {
         PutRequest: {
           Item: {
             id: { S: uuidv4() },
             studyid: { S: studyid },
+            iri1: {N: IRI1},
+            iri2: {N: IRI2}
           },
         },
       };
       
-      const vals = data[i].split(",");
-      Az_n = vals[Acc_z1idx];
-      Az_HPF_n = (-0.4286)*Az_HPF_n_1 + 0.2862*Az_n - 0.2852*Az_n_1;
-      if (i > 2) {
-        const vals_old = data[i-1].split(",");
-        del_time = vals[timeidx] - vals_old[timeidx];
-        Az_avg = (Az_HPF_n + Az_HPF_n_1)/2;
-        IRI = Math.abs(Az_avg) * del_time^2;
-        Az_n_1 = Az_n;
-        Az_HPF_n_1 = Az_HPF_n;
-      }
+      
       for (let j = 0; j < headers.length; j++) {
         obj.PutRequest.Item[headers[j]] = { N: vals[j] };
       }
