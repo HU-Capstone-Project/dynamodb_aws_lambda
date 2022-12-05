@@ -6,13 +6,13 @@ module.exports = async (data, ddbClient, rdsClient) => {
   const headers = data[1].split(",");
   let i = 2;
   let len = data.length;
-
+  
+  const request = [];
+  const result = [];
   try {
     const study = await rdsClient.query("select * from profile where key=$1", [
       studyid,
     ]);
-    const request = [];
-    const result = [];
     let latidx = 0;
     let longidx = 0;
     let timeidx = 0;
