@@ -1,7 +1,10 @@
 const { ScanCommand } = require("@aws-sdk/lib-dynamodb");
 
 module.exports = async (ddbClient, studyid) => {
-  const response = { statusCode: 200 };
+  const response = {
+    statusCode: 200,
+    headers: { "Access-Control-Allow-Origin": "*" },
+  };
   try {
     const params = studyid
       ? {
@@ -13,6 +16,7 @@ module.exports = async (ddbClient, studyid) => {
           },
         }
       : { TableName: "study_sample", ConsistentRead: true };
+
     const totalItems = [];
     do {
       const res = await ddbClient.send(new ScanCommand(params));

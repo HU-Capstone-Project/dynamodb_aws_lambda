@@ -32,6 +32,7 @@ exports.apiserver = async (event) => {
       const result = await insertSample(data, ddbClient, rdsClient);
       return {
         statusCode: 200,
+        headers:{ 'Access-Control-Allow-Origin' : '*' },
         body: JSON.stringify(result),
       };
 
