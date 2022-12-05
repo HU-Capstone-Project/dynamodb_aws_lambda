@@ -119,7 +119,7 @@ module.exports = async (data, ddbClient, rdsClient) => {
       }
     } catch (e) {
       console.error(e);
-      result.push(e);
+      result.push(e.stack);
     }
     i++;
   }
