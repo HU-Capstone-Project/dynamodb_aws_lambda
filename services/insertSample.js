@@ -44,7 +44,7 @@ module.exports = async (data, ddbClient, rdsClient) => {
       const last = data[len - 1].split(",");
       const first = data[2].split(",");
       const created = await rdsClient.query(
-        "insert into profile(time_received, start_pos_lat, start_pos_long, end_pos_lat, end_pos_long, key, surveyor_id) select to_timestamp($1), $2, $3, $4, $5, $6, id from surveyor where key=$7",
+        "insert into profile(time_received, start_pos_lat, start_pos_long, end_pos_lat, end_pos_long, key, surveyor_id) select to_timestamp($1), $2, $3, $4, $5, $6, surveyor.id from surveyor where surveyor.key=$7",
         [
           first[timeidx],
           first[latidx],
